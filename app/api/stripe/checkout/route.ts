@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -11,6 +11,23 @@ export async function POST() {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
+      );
+    }
+
+    const priceId = process.env.STRIPE_PRICE_ID;
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+
+    if (!priceId) {
+      return NextResponse.json(
+        { error: "Missing STRIPE_PRICE_ID" },
+        { status: 500 }
+      );
+    }
+
+    if (!appUrl) {
+      return NextResponse.json(
+        { error: "Missing NEXT_PUBLIC_APP_URL" },
+        { status: 500 }
       );
     }
 
@@ -29,17 +46,19 @@ export async function POST() {
       });
     }
 
+    const stripe = getStripe();
+
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: "subscription",
       payment_method_types: ["card"],
       line_items: [
         {
-          price: process.env.STRIPE_PRICE_ID!,
+          price: priceId,
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/premium/success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/premium`,
+      success_url: `${appUrl}/premium/success`,
+      cancel_url: `${appUrl}/premium`,
       customer_email: dbUser.email ?? undefined,
       metadata: {
         userId: dbUser.id,
