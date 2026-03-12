@@ -1,6 +1,6 @@
 import "./globals.css";
 import Link from "next/link";
-import { auth } from "@/auth";
+import { auth, signIn, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
 export const metadata = {
@@ -67,7 +67,21 @@ export default async function RootLayout({
                 Premium
               </Link>
 
-              {session?.user && (
+              {!session?.user ? (
+                <form
+                  action={async () => {
+                    "use server";
+                    await signIn("google");
+                  }}
+                >
+                  <button
+                    type="submit"
+                    className="rounded-full border border-pink-200 bg-white px-4 py-2 font-semibold text-pink-600 shadow-sm transition hover:bg-pink-50"
+                  >
+                    Continue with Google
+                  </button>
+                </form>
+              ) : (
                 <div className="flex items-center gap-3 text-sm">
                   <span className="text-[#7c4a68]">{session.user.name}</span>
 
@@ -76,6 +90,20 @@ export default async function RootLayout({
                       ✨ Premium
                     </span>
                   )}
+
+                  <form
+                    action={async () => {
+                      "use server";
+                      await signOut({ redirectTo: "/" });
+                    }}
+                  >
+                    <button
+                      type="submit"
+                      className="rounded-full border border-pink-200 bg-white px-4 py-2 font-semibold text-pink-600 shadow-sm transition hover:bg-pink-50"
+                    >
+                      Log out
+                    </button>
+                  </form>
                 </div>
               )}
             </nav>

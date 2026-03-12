@@ -15,6 +15,11 @@ export default function PremiumPage() {
 
       const data = await res.json();
 
+      if (res.status === 401) {
+        window.location.href = "/api/auth/signin/google?callbackUrl=/premium";
+        return;
+      }
+
       if (data.url) {
         window.location.href = data.url;
         return;
@@ -74,7 +79,7 @@ export default function PremiumPage() {
           </button>
 
           <p className="mt-4 text-sm text-white/50">
-            Secure checkout powered by Stripe.
+            You’ll be asked to sign in with Google before checkout if you are not logged in.
           </p>
         </div>
       </div>

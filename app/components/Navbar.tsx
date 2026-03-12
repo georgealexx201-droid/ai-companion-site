@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { auth } from "@/auth";
+import { auth, signIn, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
 export default async function Navbar() {
@@ -53,6 +53,36 @@ export default async function Navbar() {
             <span className="rounded-full border border-pink-200 bg-gradient-to-r from-amber-100 via-yellow-50 to-pink-100 px-3 py-1 text-xs font-semibold text-[#7a4b00] shadow-sm">
               ✨ Premium
             </span>
+          )}
+
+          {!session?.user ? (
+            <form
+              action={async () => {
+                "use server";
+                await signIn("google");
+              }}
+            >
+              <button
+                type="submit"
+                className="rounded-full border border-pink-200 bg-white px-4 py-2 font-semibold text-pink-600 shadow-sm transition hover:bg-pink-50"
+              >
+                Continue with Google
+              </button>
+            </form>
+          ) : (
+            <form
+              action={async () => {
+                "use server";
+                await signOut({ redirectTo: "/" });
+              }}
+            >
+              <button
+                type="submit"
+                className="rounded-full border border-pink-200 bg-white px-4 py-2 font-semibold text-pink-600 shadow-sm transition hover:bg-pink-50"
+              >
+                Log out
+              </button>
+            </form>
           )}
         </div>
       </div>
