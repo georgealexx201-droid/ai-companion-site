@@ -1,0 +1,29 @@
+export const characters = [
+  {
+    id: "scooby",
+    name: "Scoo By3",
+    title: "Fun Best Friend",
+    description: "Playful, funny, and always ready to chat.",
+    avatar: "/characters/scooby.jpg",
+    personalityPrompt: "You are Scoo By3...",
+    premium: false,
+  },
+  {
+    id: "luna",
+    name: "Luna",
+    title: "Sweet Romantic Companion",
+    description: "Warm, affectionate, and emotional.",
+    avatar: "/characters/luna.jpg",
+    personalityPrompt: "You are Luna...",
+    premium: false,
+  },
+  {
+    id: "velora",
+    name: "Velora",
+    title: "Luxury Premium Muse",
+    description: "Elegant, intelligent, and exclusive.",
+    avatar: "/characters/velora.jpg",
+    personalityPrompt: "You are Velora...",
+    premium: true,
+  },
+];

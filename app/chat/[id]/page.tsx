@@ -1,15 +1,29 @@
-type Props = { params: Promise<{ id: string }> };
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+import ChatClient from "./ChatClient";
+import MessageCounter from "@/app/components/MessageCounter";
 
-export default async function ChatPage({ params }: Props) {
+export default async function ChatPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const session = await auth();
+
+  if (!session?.user?.email) {
+    redirect("/");
+  }
+
   const { id } = await params;
 
   return (
-    <main className="min-h-screen p-6">
-      <a className="underline" href="/characters">← Back</a>
-      <h1 className="mt-4 text-3xl font-semibold">Chat: {id}</h1>
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(236,72,153,0.12),transparent_25%),linear-gradient(180deg,#07030a_0%,#120813_100%)] px-4 py-8 text-white">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-5">
+          <MessageCounter />
+        </div>
 
-      <div className="mt-6 rounded-xl border p-4">
-        <p className="text-gray-600">Chat page works.</p>
+        <ChatClient id={id} />
       </div>
     </main>
   );

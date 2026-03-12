@@ -1,15 +1,11 @@
-export default function Home() {
-  return (
-    <main className="min-h-screen p-6">
-      <h1 className="text-3xl font-semibold">AI Companion Site</h1>
-      <p className="mt-2 text-gray-600">Choose a character and start chatting.</p>
+import HomeFeatureShowcase from "@/app/components/HomeFeatureShowcase";
 
-      <a
-        href="/characters"
-        className="inline-block mt-6 rounded-xl bg-black text-white px-4 py-2"
-      >
-        Browse characters →
-      </a>
+export default async function Home() {
+  return (
+    <main className="min-h-screen bg-gradient-to-b from-white via-[#fff8fc] to-[#ffeef7] text-[#2b1330]">
+      <div className="mx-auto max-w-7xl px-6 py-6 md:py-8">
+        <HomeFeatureShowcase />
+      </div>
     </main>
   );
 }
