@@ -38,7 +38,7 @@ export default function ChatClient({ id }: { id: string }) {
 
     async function loadHistory() {
       try {
-        const res = await fetch(`/api/chat/history?characterId=${character.id}`);
+        const res = await fetch(`/api/chat/history?characterId=${id}`);
         const data = await res.json();
 
         if (!res.ok) {
@@ -59,7 +59,7 @@ export default function ChatClient({ id }: { id: string }) {
       } catch (error) {
         console.error("Failed to load chat history:", error);
 
-        const savedMessages = localStorage.getItem(getStorageKey(character.id));
+        const savedMessages = localStorage.getItem(getStorageKey(id));
 
         if (savedMessages) {
           try {
@@ -84,12 +84,12 @@ export default function ChatClient({ id }: { id: string }) {
     }
 
     loadHistory();
-  }, [character]);
+  }, [character, id]);
 
   useEffect(() => {
     if (!character || messages.length === 0) return;
-    localStorage.setItem(getStorageKey(character.id), JSON.stringify(messages));
-  }, [messages, character]);
+    localStorage.setItem(getStorageKey(id), JSON.stringify(messages));
+  }, [messages, character, id]);
 
   useEffect(() => {
     const el = messagesContainerRef.current;
