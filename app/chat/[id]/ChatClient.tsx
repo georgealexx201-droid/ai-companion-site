@@ -36,6 +36,8 @@ export default function ChatClient({ id }: { id: string }) {
   useEffect(() => {
     if (!character) return;
 
+    const currentCharacter = character;
+
     async function loadHistory() {
       try {
         const res = await fetch(`/api/chat/history?characterId=${id}`);
@@ -53,7 +55,7 @@ export default function ChatClient({ id }: { id: string }) {
         setMessages([
           {
             role: "assistant",
-            content: `Hey, I'm ${character.name} 💖 I'm here with you.`,
+            content: `Hey, I'm ${currentCharacter.name} 💖 I'm here with you.`,
           },
         ]);
       } catch (error) {
@@ -77,7 +79,7 @@ export default function ChatClient({ id }: { id: string }) {
         setMessages([
           {
             role: "assistant",
-            content: `Hey, I'm ${character.name} 💖 I'm here with you.`,
+            content: `Hey, I'm ${currentCharacter.name} 💖 I'm here with you.`,
           },
         ]);
       }
