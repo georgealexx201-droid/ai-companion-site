@@ -8,6 +8,11 @@ type IncomingMessage = {
   content: string;
 };
 
+type StoredMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
 const FREE_DAILY_LIMIT = 20;
 
 export async function POST(req: Request) {
@@ -75,7 +80,6 @@ export async function POST(req: Request) {
       });
     }
 
-    // 1) Premium character lock
     if (character.premium && !user.isPremium) {
       return NextResponse.json(
         {
@@ -86,7 +90,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2) Free user daily message limit
     if (!user.isPremium) {
       const startOfDay = new Date();
       startOfDay.setHours(0, 0, 0, 0);
@@ -156,9 +159,13 @@ export async function POST(req: Request) {
       },
     });
 
-    const previousMessages = await prisma.message.findMany({
+    const previousMessages: StoredMessage[] = await prisma.message.findMany({
       where: { chatId: chat.id },
       orderBy: { createdAt: "asc" },
+      select: {
+        role: true,
+        content: true,
+      },
     });
 
     const messagesForAI = [
@@ -166,23 +173,26 @@ export async function POST(req: Request) {
         role: "system" as const,
         content: character.personalityPrompt,
       },
-      ...previousMessages.map((msg) => ({
-        role: msg.role as "user" | "assistant",
+      ...previousMessages.map((msg: StoredMessage) => ({
+        role: msg.role,
         content: msg.content,
       })),
     ];
 
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model,
-        messages: messagesForAI,
-      }),
-    });
+    const response = await fetch(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model,
+          messages: messagesForAI,
+        }),
+      }
+    );
 
     const data = await response.json();
 
